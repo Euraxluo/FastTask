@@ -1,4 +1,4 @@
-from fasttask.applications import FastTask as FastTask
+from fasttask.application import FastTask as FastTask
 
 name = "fast task"
 __version__ = "0.0.1"
