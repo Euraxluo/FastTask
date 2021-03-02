@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fasttask"
-version = "0.1.2"
+version = "0.1.3"
 description = "### FastTask is simple to fast run task"
 authors = ["Euraxluo <euraxluo@qq.com>"]
 license = "GNU GENERAL PUBLIC LICENSE"

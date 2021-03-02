@@ -241,13 +241,15 @@ class FastTask(object):
                         distribut = broker.get(block=False)
                         if isinstance(distribut, tuple):
                             all_tasks.append(executor.submit(task, *distribut))
-                        if isinstance(distribut, dict):
+                        elif isinstance(distribut, dict):
                             all_tasks.append(executor.submit(task, **distribut))
+                        else:
+                            all_tasks.append(executor.submit(task,distribut))
                     except Empty as e:
                         # print("broker have not task")
                         continue
                 else:
-                    break
+                    continue
 
     @staticmethod
     async def work_in_async(executor, func: Callable, *args, async_loop: AbstractEventLoop = None, **kwargs):
