@@ -99,6 +99,7 @@ class FastTask(object):
         self.terminated = False
         """运行所有worker的线程对象"""
         self.threading_workers = None
+        self.workings = 0
 
     def addChannel(self, channelName: str, channel: Channel):
         """
@@ -145,6 +146,7 @@ class FastTask(object):
                 task_result = func(*args, **kwargs)
                 backend_obj = self.backends[backend]
                 backend_obj.put(task_result)
+                self.workings -= 1
                 return task_result
 
             self.tasks[uuid.uuid1()] = [wrapper_task, self.brokers[broker], self.backends[backend], max_worker]
@@ -221,6 +223,13 @@ class FastTask(object):
         """3.启动所有的异步worker并阻塞等待"""
         loop.run_until_complete(asyncio.wait(all_worker))
 
+    def wait(self):
+        while self.workings>0:
+            continue        
+        if self.workings == 0:
+            self.terminate()
+        else:
+            raise Exception
     def worker(self, task: Callable, thread_name_prefix: str):
         """
         worker
@@ -239,6 +248,7 @@ class FastTask(object):
                     try:
                         """中间人那里有任务,获取任务，并且提交为一个运行态的worker"""
                         distribut = broker.get(block=False)
+                        self.workings +=1
                         if isinstance(distribut, tuple):
                             all_tasks.append(executor.submit(task, *distribut))
                         elif isinstance(distribut, dict):
